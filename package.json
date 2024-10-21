@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migration": "npx prisma migrate",
+    "migration": "npx prisma migrate dev",
     "dev": "tsx watch src/server.ts",
     "dev:debug": "tsx watch --inspect=0.0.0.0:9229 src/server.ts"
   },
