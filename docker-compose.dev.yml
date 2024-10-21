@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:13.0-alpine
+    container_name: marble-shop-postgres
+    volumes:
+      - ./postgres:/data/postgres
+      - ./backup:/data/backup
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASS:-admin}
+      POSTGRES_DB: ${DB_NAME:-marble-shop}
+      PGDATA: /data/postgres
+    ports:
+      - 5433:5432
+    networks:
+      - marble-shop-dev
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: marble-shop-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 5041:80
+    networks:
+      - marble-shop-dev
+
+  marble-shop-backend-dev:
+    container_name: marble-shop-backend-dev
+    hostname: marble-shop-backend-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ".:/code"
+      - /code/node_modules
+    networks:
+      - marble-shop-dev
+    ports:
+      - 8020:8020
+      - 9229:9229
+    environment:
+      - NODE_ENV=dev-docker
+      - PORT=${PORT}
+      - HOST=${HOST}
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - ENCRYPT_KEYTOKEN_EXPIRATION_TIME=${ENCRYPT_KEYTOKEN_EXPIRATION_TIME}
+      - TOKEN_EXPIRATION_TIME=${TOKEN_EXPIRATION_TIME}
+      - INTERNAL_SERVICES_TOKEN=${INTERNAL_SERVICES_TOKEN}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    deploy:
+      restart_policy:
+        condition: on-failure
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm i
+        npm run migration
+        npm run dev:debug
+networks:
+  marble-shop-dev:
+    driver: bridge
+
+volumes:
+  postgres:

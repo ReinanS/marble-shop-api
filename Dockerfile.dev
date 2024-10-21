@@ -1,0 +1,21 @@
+ARG NODE_IMAGE=node:20-alpine
+ARG ENVIRONMENT=dev-docker
+
+FROM $NODE_IMAGE
+
+ENV TZ=America/Bahia
+ENV NODE_ENV=$ENVIRONMENT
+ENV PORT=8020
+ENV HOST=0.0.0.0
+
+EXPOSE $PORT
+
+WORKDIR /code
+
+RUN apk --no-cache add dumb-init
+
+RUN apk add g++ make python3
+
+RUN apk update && apk add --no-cache git
+
+RUN apk --update add postgresql-client
