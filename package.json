@@ -9,9 +9,9 @@
     "dev:debug": "tsx watch --inspect=0.0.0.0:9229 src/server.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Reinan de Souza",
   "license": "ISC",
-  "description": "",
+  "description": "Api Restfull de um mini SAAS de gerenciamento de lojas de mármores, com o uso de Node e Prisma",
   "dependencies": {
     "@fastify/cookie": "^11.0.1",
     "@fastify/cors": "^10.0.1",
