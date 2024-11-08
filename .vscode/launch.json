@@ -1,0 +1,31 @@
+{
+  // Use o IntelliSense para saber mais sobre os atributos possíveis.
+  // Focalizar para exibir as descrições dos atributos existentes.
+  // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "attach",
+      "protocol": "inspector",
+      "restart": true,
+      "name": "Anexar ao processo local",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]      
+    },
+    {
+      "name": "Anexar ao processo remoto",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "address": "localhost",
+      "restart": true,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/code",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ]
+}

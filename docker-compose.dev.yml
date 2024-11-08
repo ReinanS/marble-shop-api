@@ -1,4 +1,4 @@
-version: '3'
+version: "3.7"
 
 services:
   postgres:
@@ -45,7 +45,6 @@ services:
     environment:
       - NODE_ENV=dev-docker
       - PORT=${PORT}
-      - HOST=${HOST}
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - ENCRYPT_KEYTOKEN_EXPIRATION_TIME=${ENCRYPT_KEYTOKEN_EXPIRATION_TIME}

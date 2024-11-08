@@ -13,25 +13,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Roles {
+  USER
+  ADMIN
+
+  @@map("roles")
+}
+
 model Users {
-  id        String   @id @default(uuid())
-  name      String   @db.VarChar(100)
-  email     String   @unique @db.VarChar(100)
-  password  String   @db.VarChar(64)
-  role_id   String
-  role      Roles    @relation(fields: [role_id], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String     @id @default(uuid())
+  name        String     @db.VarChar(100)
+  email       String     @unique @db.VarChar(100)
+  password    String     @db.VarChar(64)
+  role        Roles      @default(USER)
+  employer_id String?
+  employer    Employers? @relation(fields: [employer_id], references: [id])
+  created_at  DateTime   @default(now())
+  updated_at  DateTime?  @updatedAt
 
   @@map("users")
 }
 
-model Roles {
-  id        String   @id @default(uuid())
-  name      String   @db.VarChar(100)
-  users     Users[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Employers {
+  id           String   @id @default(uuid())
+  user         Users[]
+  address      Address?
+  company_name String   @unique @db.VarChar(100)
+  fantasy_name String   @unique @db.VarChar(100)
+  cnpj         String   @unique @db.VarChar(18)
+  user_id      String   @unique
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
-  @@map("roles")
+  @@map("employers")
+}
+
+model Address {
+  id             String    @id @default(uuid())
+  postal_code    String    @db.VarChar(50)
+  public_space   String?   @db.VarChar(50)
+  address_number String?   @db.VarChar(5)
+  complement     String?   @db.VarChar(20)
+  city           String    @db.VarChar(100)
+  state          String    @db.VarChar(100)
+  country        String    @db.VarChar(100)
+  employer_id    String    @unique
+  employer       Employers @relation(fields: [employer_id], references: [id])
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  @@map("address")
 }
