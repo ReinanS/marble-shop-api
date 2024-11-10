@@ -1,31 +1,33 @@
 import { z } from "zod";
 
-// Define o schema de erro interno do servidor com descrição
 export const InternalServerErrorSchema = z.object({
-  error: z.string().default('Internal Server Error').describe('Mensagem de erro genérica para falhas internas'),
-}).describe('Erro inesperado no servidor');
+  error: z.string().default('Internal Server Error').describe('Generic error message for internal failures'),
+}).describe('Unexpected server error');
 
-// Define o schema para erro de email ou senha inválidos
-export const InvalidEmailOrPasswordErrorSchema = z.object({
-  error: z.string().default('Invalid email or password').describe('Erro quando email ou senha estão incorretos'),
-}).describe('Erro de autenticação devido a credenciais inválidas');
-
-// Define o schema para erro de ausência de cabeçalho de autorização
 export const NoAuthorizationErrorSchema = z.object({
-  error: z.string().default('No authorization header').describe('Erro para cabeçalho de autorização ausente'),
-}).describe('Erro quando o cabeçalho de autorização não é fornecido');
+  error: z.string().default('No authorization header').describe('Error for missing authorization header'),
+}).describe('Error when the authorization header is not provided');
 
-// Define o schema para erro de usuário já existente
 export const UserAlreadyExistsErrorSchema = z.object({
-  error: z.string().default('User already exists').describe('Erro para tentativa de criação de usuário já existente'),
-}).describe('Erro ao tentar registrar um usuário que já existe');
+  error: z.string().default('User already exists').describe('Error for attempt to create an already existing user'),
+}).describe('Error when trying to register a user that already exists');
 
-// Define o schema para erro de dados de entrada inválidos
 export const InvalidInputDataErrorSchema = z.object({
-  error: z.string().default('Invalid input data').describe('Erro para dados de entrada inválidos na requisição'),
-}).describe('Erro de validação dos dados de entrada');
+  error: z.string().default('Invalid input data').describe('Error for invalid input data in the request'),
+}).describe('Error validating the input data');
 
-// Schema para Token inválido ou ausente
 export const InvalidOrMissingTokenErrorSchema = z.object({
-  error: z.string().default('Invalid or missing refresh token').describe('Erro quando o token de atualização é inválido ou está ausente'),
-}).describe('Erro de autenticação devido a token inválido ou ausente');
+  error: z.string().default('Invalid or missing refresh token').describe('Error when the refresh token is invalid or missing'),
+}).describe('Authentication error due to invalid or missing token');
+
+export const UserNotFoundErrorSchema = z.object({
+  error: z.string().default('Invalid or non-existent user').describe('Error when the id is incorrect'),
+}).describe('Error when querying user');
+
+export const EmailSendErrorSchema = z.object({
+  error: z.string().default('Failed to send the email').describe('Error that occurred when trying to send the email'),
+}).describe('Error when trying to send an email');
+
+export const ResetPasswordErrorSchema = z.object({
+  error: z.string().default('Failed to update the password').describe('Error that occurred when trying to update the user\'s password'),
+}).describe('Error when trying to update the user\'s password');

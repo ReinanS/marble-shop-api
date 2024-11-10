@@ -17,8 +17,16 @@ export const UserSchema = z.object({
   updated_at: z.date().nullable(),
 })
 
-export const GetUserSchema = z.object({
+export const UserIdSchema = z.object({
   id: z.string(),
+})
+
+export const UserEmailSchema = z.object({
+  email: z.string().email(),
+})
+
+export const UserPasswordSchema = z.object({
+  password: z.string().min(8),
 })
 
 export const CreateUserSchema = UserSchema.pick({
@@ -38,6 +46,14 @@ export const UserResponseSchema = UserSchema.pick({
   name: true,
   email: true,
   role: true,
-}).describe('Retorno de sucesso');
+}).describe('Successful response')
 
-export const UsersResponseSchema = z.array(UserResponseSchema).describe('Retorno de sucesso com lista de usuários');
+export const UsersResponseSchema = z.array(UserResponseSchema).describe('Successful response with a list of users')
+
+export const RecoveryPasswordResponseSchema = z.object({
+  success: z.boolean()
+}).describe('Password recovery request successfully processed')
+
+export const ResetPasswordResponseSchema = z.object({
+  success: z.boolean()
+}).describe('Password reset request successfully processed')
