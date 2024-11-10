@@ -9,9 +9,6 @@ type ErrorHandler = (error: Error, reply: FastifyReply) => void;
 
 // Create a map of error types to their handlers
 const errorHandlers: Record<string, ErrorHandler> = {
-  UserAlreadyExistsError: (error, reply) => {
-    reply.status(409).send({ error: error.message });
-  },
   ZodError: (error, reply) => {
     reply.status(400).send({ error: 'Invalid input', details: (error as ZodError).errors });
   },
@@ -24,6 +21,14 @@ const errorHandlers: Record<string, ErrorHandler> = {
     }
   },
 
+  UserAlreadyExistsError: (error, reply) => {
+    reply.status(409).send({ error: error.message });
+  },
+
+  UserNotFoundError: (error, reply) => {
+    reply.status(404).send({ error: error.message });
+  },
+
   InvalidEmailOrPassword:  (error, reply) => {
     reply.status(401).send({ error: error.message });
   },
@@ -31,9 +36,17 @@ const errorHandlers: Record<string, ErrorHandler> = {
   InvalidOrMissingRefreshTokenError:  (error, reply) => {
     reply.status(401).send({ error: error.message });
   },
+
+  EmailSendError:  (error, reply) => {
+    reply.status(503).send({ error: error.message });
+  },
+
+  ResetPasswordError:  (error, reply) => {
+    reply.status(503).send({ error: error.message });
+  },
+
 };
 
-// Generic error handler
 export const handleError = (error: unknown, reply: FastifyReply) => {
   console.error(error);
 
@@ -41,7 +54,7 @@ export const handleError = (error: unknown, reply: FastifyReply) => {
   const handler = errorHandlers[errorType];
 
   if (handler) {
-    handler(error as Error, reply); // Use type assertion to ensure it's an Error
+    handler(error as Error, reply);
   } else {
     reply.status(500).send({ error: error });
   }
