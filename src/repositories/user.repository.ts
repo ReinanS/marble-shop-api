@@ -59,6 +59,17 @@ class UserRepositoryPrisma implements UserRepository {
 
     return result || null;
   }
+
+  async resetPassword(id: string, newPassword: string): Promise<void> {
+   await prisma.users.update({
+      where: {
+        id: id,
+      },
+      data: {
+        password: newPassword,
+      }
+    })
+  }
 }
 
 export { UserRepositoryPrisma }

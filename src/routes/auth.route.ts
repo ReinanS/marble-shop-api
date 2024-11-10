@@ -2,8 +2,8 @@ import { FastifyInstance } from "fastify";
 import { UserUseCase } from "../usecases/user.usecase";
 import { handleError } from "../helpers/errors/error-handle.error";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import { ACESS_TOKEN_EXPIRATION_TIME, InvalidOrMissingRefreshTokenError, REFRESH_TOKEN_EXPIRATION_TIME } from "../helpers";
-import { AccessTokenRenewedSchema, AuthorizationHeaderSchema, CreateUserSchema, CreateUserWhithoutRoleSchema, GetUserSchema, InternalServerErrorSchema, InvalidInputDataErrorSchema, InvalidOrMissingTokenErrorSchema, LoginReponseSchema, LoginSchema, LogoutResponseSchema, NoAuthorizationErrorSchema, UserAlreadyExistsErrorSchema, UserResponseSchema, UsersResponseSchema } from "../schemas";
+import { InvalidOrMissingRefreshTokenError } from "../helpers";
+import { AccessTokenRenewedSchema, CreateUserWhithoutRoleSchema, EmailSendErrorSchema, UserIdSchema, InternalServerErrorSchema, InvalidInputDataErrorSchema, InvalidOrMissingTokenErrorSchema, LoginReponseSchema, LoginSchema, LogoutResponseSchema, NoAuthorizationErrorSchema, RecoveryPasswordResponseSchema, UserAlreadyExistsErrorSchema, UserEmailSchema, UserNotFoundErrorSchema, UserPasswordSchema, UserResponseSchema, ResetPasswordResponseSchema, ResetPasswordErrorSchema } from "../schemas";
 import { CreateUserInput } from "../types/user";
 import { LoginInput } from "../types/login";
 
@@ -13,7 +13,7 @@ export default async function AuthRoutes(fastify: FastifyInstance) {
 
   fastify.post<{ Body: CreateUserInput }>('/register', {
     schema: {
-      description: 'Create User',
+      description: 'Registers a new user with the provided details.',
       tags: ['Auth'],
       body: CreateUserWhithoutRoleSchema,
       response: {
@@ -35,7 +35,7 @@ export default async function AuthRoutes(fastify: FastifyInstance) {
 
   fastify.post<{ Body: LoginInput }>('/login', {
     schema: {
-      description: 'Acess',
+      description: 'Authenticates the user and returns an access token along with a refresh token stored in a cookie.',
       tags: ['Auth'],
       body: LoginSchema,
       response: {
@@ -65,7 +65,7 @@ export default async function AuthRoutes(fastify: FastifyInstance) {
 
   fastify.post('/refresh-token', {
     schema: {
-      description: 'Rota para renovar o access token usando o refresh token via cookie',
+      description: 'Renews the access token using the refresh token from the cookies.',
       tags: ['Auth'],
       security: [{ cookieAuth: [] }],
       response: {
@@ -83,10 +83,6 @@ export default async function AuthRoutes(fastify: FastifyInstance) {
 
       const newAcessToken = await userUseCase.refreshToken(refreshToken, req.jwt)
 
-      if (!newAcessToken) {
-        throw new InvalidOrMissingRefreshTokenError();
-      }
-
       return { accessToken: newAcessToken };
     } catch (error) {
       console.error(error);
@@ -96,7 +92,7 @@ export default async function AuthRoutes(fastify: FastifyInstance) {
 
   fastify.delete('/logout', {
     preHandler: [authMiddleware], schema: {
-      description: 'Rota para remover o refresh token dos cookies',
+    description: 'Logs out the user by removing the refresh token from the cookies.',
         tags: ['Auth'],
       response: {
         200: LogoutResponseSchema,
@@ -106,6 +102,56 @@ export default async function AuthRoutes(fastify: FastifyInstance) {
     reply.clearCookie('refresh_token');
     return reply.send({ message: 'Logout successful' })
   });
+
+  fastify.get<{ Params: { email: string } }>('/forgot-password/:email', {
+    schema: {
+      description: 'Requests a password recovery link for the user with the specified email address.',
+      tags: ['Auth'],
+      params: UserEmailSchema,
+      response: {
+        200: RecoveryPasswordResponseSchema,
+        400: InvalidInputDataErrorSchema,
+        404: UserNotFoundErrorSchema,
+        500: InternalServerErrorSchema,
+        503: EmailSendErrorSchema,
+      }
+    }
+  },async (req, reply) => {
+    try {
+      const { email } = req.params;
+      await userUseCase.forgotPassword(email)
+      return { sucess: true }
+    } catch (error) {
+      handleError(error, reply);
+    }
+  })
+
+  fastify.put<{ Params: { id: string }, Body: {password: string} }>('/reset-password/:id', {
+    schema: {
+      description: 'Resets the password for the user with the specified ID',
+      tags: ['Auth'],
+      security: [{ bearerAuth: [] }],
+      params: UserIdSchema,
+      body: UserPasswordSchema,
+      response: {
+        400: InvalidInputDataErrorSchema,
+        404: UserNotFoundErrorSchema,
+        200: ResetPasswordResponseSchema,
+        500: InternalServerErrorSchema,
+        503: ResetPasswordErrorSchema,
+      }
+    }
+  }, async (req, reply) => {
+    try {
+      const { id } = req.params;
+      const { password } = req.body;
+      await userUseCase.resetPassword(id, password);
+      return { sucess: true };
+    } catch (error) {
+      handleError(error, reply);
+    }
+  })
+
 
   fastify.log.info('Auth routes registered');
 }
