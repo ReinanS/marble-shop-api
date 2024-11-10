@@ -1,13 +1,13 @@
-const PORT = Number(process.env.PORT);
-const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
-const JWT_SECRET_KEY=String(process.env.JWT_SECRET_KEY)
-const ACESS_TOKEN_EXPIRATION_TIME = String(process.env.ACESS_TOKEN_EXPIRATION_TIME)
-const REFRESH_TOKEN_EXPIRATION_TIME = String(process.env.REFRESH_TOKEN_EXPIRATION_TIME)
-
-export {
-  PORT,
-  SALT_ROUNDS,
-  JWT_SECRET_KEY,
-  ACESS_TOKEN_EXPIRATION_TIME,
-  REFRESH_TOKEN_EXPIRATION_TIME,
-}
+export const PORT = Number(process.env.PORT);
+export const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
+export const JWT_SECRET_KEY=String(process.env.JWT_SECRET_KEY)
+export const ACESS_TOKEN_EXPIRATION_TIME = String(process.env.ACESS_TOKEN_EXPIRATION_TIME)
+export const REFRESH_TOKEN_EXPIRATION_TIME = String(process.env.REFRESH_TOKEN_EXPIRATION_TIME)
+export const EMAIL_SERVICE = String(process.env.EMAIL_SERVICE);
+export const SMTP_HOST = String(process.env.SMTP_HOST);
+export const SMTP_PORT = Number(process.env.SMTP_PORT);
+export const EMAIL_AUTH_USER = String(process.env.EMAIL_AUTH_USER);
+export const EMAIL_AUTH_PASS = String(process.env.EMAIL_AUTH_PASS);
+export const SENDER_EMAIL = String(process.env.SENDER_EMAIL)
+export const MARBLE_FRONT_ENDPOINT = String(process.env.MARBLE_FRONT_ENDPOINT)
+export const KEY_ENCRYPT_URL = String(process.env.KEY_ENCRYPT_URL)
