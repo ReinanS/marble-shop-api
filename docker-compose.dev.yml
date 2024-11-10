@@ -42,14 +42,8 @@ services:
     ports:
       - 8020:8020
       - 9229:9229
-    environment:
-      - NODE_ENV=dev-docker
-      - PORT=${PORT}
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - ENCRYPT_KEYTOKEN_EXPIRATION_TIME=${ENCRYPT_KEYTOKEN_EXPIRATION_TIME}
-      - TOKEN_EXPIRATION_TIME=${TOKEN_EXPIRATION_TIME}
-      - INTERNAL_SERVICES_TOKEN=${INTERNAL_SERVICES_TOKEN}
+    env_file:
+      - .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     cap_add:
