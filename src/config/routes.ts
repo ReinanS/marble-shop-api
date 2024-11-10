@@ -10,11 +10,9 @@ export async function setupRoutes(app: FastifyInstance) {
     if (file.endsWith('.route.ts') || file.endsWith('.route.js')) {
       const route = await import(path.join(routesPath, file));
 
-      const isUserRoute = file === 'user.route.ts';
       const options = {
         prefix: `${file.split('.')[0]}`,
-        // Aplica middleware em todas as rotas, menos user.route.ts
-        preHandler: isUserRoute ? [] : [authMiddleware], 
+        preHandler: [authMiddleware], 
       };
 
       if (typeof route.default === 'function') {
